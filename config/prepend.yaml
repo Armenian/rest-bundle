@@ -1,0 +1,9 @@
+dmp_rest:
+  body_converter:
+    enabled: true
+    validate: true
+    validation_errors_argument: !php/const DMP\RestBundle\Validation\ValidationExceptionThrowingBodyConverterDecorator::VALIDATION_ERRORS_ARGUMENT_NAME
+  query_converter:
+    enabled: true
+    validate: true
+    validation_errors_argument: !php/const DMP\RestBundle\Validation\ValidationExceptionThrowingQueryConverterDecorator::VALIDATION_ERRORS_ARGUMENT_NAME

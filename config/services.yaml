@@ -1,0 +1,50 @@
+services:
+
+  DMP\RestBundle\Listener\SerializeListener:
+    tags:
+      - { name: kernel.event_subscriber }
+
+  dmp_rest.serializer.symfony:
+    class: DMP\RestBundle\Serializer\SymfonySerializerAdapter
+    public: false
+
+  dmp_bundle.validation_exception_factory:
+    class: DMP\RestBundle\Validation\ValidationExceptionFactory
+
+  DMP\RestBundle\Listener\ExceptionListener:
+    arguments:
+      $exceptionDTOFactory: '@DMP\RestBundle\Controller\DTO\ExceptionDTOFactory'
+      $appEnv: '%env(APP_ENV)%'
+    tags:
+      - { name: kernel.event_subscriber }
+
+  dmp_rest.versioning.listener:
+    class: DMP\RestBundle\Listener\VersionListener
+    arguments:
+      $versionResolver: '@dmp_rest.versioning.chain_resolver'
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 33 }
+
+  dmp_rest.versioning.chain_resolver:
+    class: DMP\RestBundle\Version\ChainVersionResolver
+    public: false
+    arguments:
+      $resolvers: [
+        '@dmp_rest.versioning.header_resolver',
+        '@dmp_rest.versioning.media_type_resolver',
+        'dmp_rest.versioning.query_parameter_resolver'
+      ]
+
+  dmp_rest.versioning.header_resolver:
+    class: DMP\RestBundle\Version\Resolver\HeaderVersionResolver
+    public: false
+
+  dmp_rest.versioning.media_type_resolver:
+    class: DMP\RestBundle\Version\Resolver\MediaTypeVersionResolver
+    public: false
+
+  dmp_rest.versioning.query_parameter_resolver:
+    class: DMP\RestBundle\Version\Resolver\QueryParameterVersionResolver
+    public: false
+
+  DMP\RestBundle\Controller\DTO\ExceptionDTOFactory: ~

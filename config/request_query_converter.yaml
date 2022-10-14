@@ -1,0 +1,23 @@
+services:
+
+  dmp_rest.converter.request_query:
+    class: DMP\RestBundle\Request\QueryParamConverter
+    autowire: true
+    public: true
+    tags:
+      - { name: request.param_converter, converter: dmp_rest.request_query, priority: -40 }
+    arguments:
+      $converter: 'dmp_rest.request_query'
+      $serializer: '@dmp_rest.serializer.symfony'
+      $groups: null
+      $version: null
+      $validator: '@validator'
+      $validationErrorsArgument: null
+
+  dmp_rest.validation_exception_throwing_query_converter:
+    class: DMP\RestBundle\Validation\ValidationExceptionThrowingQueryConverterDecorator
+    autowire: true
+    decorates: dmp_rest.converter.request_query
+    arguments:
+      - '@dmp_rest.validation_exception_throwing_query_converter.inner'
+      - '@dmp_bundle.validation_exception_factory'

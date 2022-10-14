@@ -1,0 +1,12 @@
+framework:
+  test: true
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  DMP\RestBundle\Tests\Fixtures\Controller\TestController:
+    autowire: true
+    tags:
+      - controller.service_arguments

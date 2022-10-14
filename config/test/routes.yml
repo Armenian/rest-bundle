@@ -1,0 +1,3 @@
+test_controllers:
+  resource: ../../tests/Fixtures/Controller/
+  type: annotation

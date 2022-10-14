@@ -1,0 +1,23 @@
+services:
+
+  dmp_rest.converter.request_body:
+    class: DMP\RestBundle\Request\BodyParamConverter
+    autowire: true
+    public: true
+    tags:
+      - { name: request.param_converter, converter: dmp_rest.request_body, priority: -50 }
+    arguments:
+      $converter: 'dmp_rest.request_body'
+      $serializer: '@dmp_rest.serializer.symfony'
+      $groups: null
+      $version: null
+      $validator: '@validator'
+      $validationErrorsArgument: null
+
+  dmp_rest.validation_exception_throwing_body_converter:
+    class: DMP\RestBundle\Validation\ValidationExceptionThrowingBodyConverterDecorator
+    autowire: true
+    decorates: dmp_rest.converter.request_body
+    arguments:
+      - '@dmp_rest.validation_exception_throwing_body_converter.inner'
+      - '@dmp_bundle.validation_exception_factory'
