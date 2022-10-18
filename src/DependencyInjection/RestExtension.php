@@ -49,7 +49,6 @@ class RestExtension extends Extension implements PrependExtensionInterface
         $loader->load('request_body_converter.yaml');
 
         if (!empty($config['body_converter']['validation_errors_argument'])) {
-
             $container->getDefinition('dmp_rest.converter.request_body')
                 ->replaceArgument('$validationErrorsArgument', $config['body_converter']['validation_errors_argument']);
         }

@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class SerializeListener implements EventSubscriberInterface
 {
     private const DEFAULT_CODE = Response::HTTP_OK;
+    private const DEFAULT_FORMAT = 'json';
 
     private const DEFAULT_CONTEXT = [
         JsonEncode::OPTIONS => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
@@ -44,8 +45,7 @@ class SerializeListener implements EventSubscriberInterface
             return;
         }
 
-        $format = $request->getRequestFormat($request->getContentType());
-
+        $format = $request->getRequestFormat($request->getContentType()) ?? self::DEFAULT_FORMAT;
         if (! $format) {
             return;
         }
@@ -53,7 +53,7 @@ class SerializeListener implements EventSubscriberInterface
         $result = $event->getControllerResult();
 
         $code = $config->getStatusCode() ?? self::DEFAULT_CODE;
-        $type = "application/json";
+        $type = "application/" . $format;
 
         $content = $this->serializer->serialize(
             $result,

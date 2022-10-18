@@ -7,12 +7,13 @@
     "php": ">=8.1",
     "ext-json": "*",
     "sensio/framework-extra-bundle": "^6.2",
-    "symfony/serializer-pack": "^1.1"
+    "symfony/serializer-pack": "^1.1",
+    "symfony/framework-bundle": "^5.4"
   },
   "require-dev": {
     "dmp/cg-lib": "^0.1.0",
     "doctrine/annotations": "^1.13",
-    "doctrine/collections": "^2.0",
+    "doctrine/collections": "^1.8",
     "doctrine/common": "^3.4",
     "doctrine/dbal": "^2.13",
     "matthiasnoback/symfony-dependency-injection-test": "^4.3",
@@ -23,10 +24,10 @@
     "symfony/http-kernel": "^5.4",
     "symfony/validator": "^5.4",
     "symfony/routing": "^5.4",
-    "symfony/framework-bundle": "^5.4",
     "symfony/dependency-injection": "^5.4",
     "symfony/config": "^5.4",
-    "symfony/options-resolver": "^5.4"
+    "symfony/options-resolver": "^5.4",
+    "doctrine/orm": "^2.13"
   },
   "autoload": {
     "psr-4": {
