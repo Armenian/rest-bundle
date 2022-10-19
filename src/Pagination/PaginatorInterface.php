@@ -12,6 +12,7 @@ interface PaginatorInterface
     public function paginate(
         QueryBuilder $queryBuilder,
         Pagination   $paginationParameters,
-        bool $fetchJoinCollection = false
+        bool $fetchJoinCollection,
+        ?callable $callback
     ): PaginatedCollection;
 }

@@ -11,12 +11,17 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use DMP\RestBundle\Pagination\Paginated;
 use DMP\RestBundle\Pagination\Pagination;
 use Doctrine\ORM\Tools\Pagination\CountWalker;
+use ArrayIterator;
+use Exception;
 
 class QueryBuilderPaginator implements PaginatorInterface
 {
 
+    /**
+     * @throws Exception
+     */
     public function paginate(QueryBuilder $queryBuilder, Pagination $paginationParameters,
-                             bool $fetchJoinCollection = false): Paginated
+                                bool $fetchJoinCollection, ?callable $callback): Paginated
     {
 	    $queryBuilder->getQuery()->setHint(CountWalker::HINT_DISTINCT, false);
 
@@ -33,7 +38,7 @@ class QueryBuilderPaginator implements PaginatorInterface
             $paginator->count(),
             $paginationParameters->getLimit(),
             $paginationParameters->getPage(),
-            new ArrayCollection(iterator_to_array($paginator->getIterator())),
+            $this->getPageResult($paginator->getIterator(), $callback),
 	        $this->getTotalPages($paginator->count(), $paginationParameters->getLimit()),
 	        $this->getPreviousPage($paginationParameters->getPage()),
 	        $this->getNextPage(
@@ -43,6 +48,16 @@ class QueryBuilderPaginator implements PaginatorInterface
 		        $paginationParameters->getLimit(),
 	        )
         );
+    }
+
+    private function getPageResult(ArrayIterator $iterator, ?callable $callback): ArrayCollection
+    {
+        $result = iterator_to_array($iterator);
+        if ($callback === null) {
+            return new ArrayCollection($result);
+        }
+
+        return new ArrayCollection(array_values(array_map($callback, $result)));
     }
 
     private function getTotalPages(int $count, int $limit): int

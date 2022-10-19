@@ -14,8 +14,8 @@ class Paginator
     {}
 
     public function paginate(QueryBuilder $queryBuilder, Pagination $pagination,
-                             bool $fetchJoinCollection = false): Paginated
+                                bool $fetchJoinCollection = false, ?callable $callback = null): Paginated
     {
-        return $this->paginator->paginate($queryBuilder, $pagination, $fetchJoinCollection);
+        return $this->paginator->paginate($queryBuilder, $pagination, $fetchJoinCollection, $callback);
     }
 }
