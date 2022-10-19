@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace DMP\RestBundle\Tests;
 
 
-use DMP\RestBundle\Tests\Fixtures\Controller\TestController;
 use DMP\RestBundle\Tests\Lib\RestTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -46,7 +46,8 @@ class FunctionalTest extends WebTestCase
         $this->setRestClient(self::createClient());
     }
 
-    public function testRequest(): void
+    /** @test */
+    public function it_makes_simple_request(): void
     {
         self::assertEquals([
             'testStringField' => self::TEST_STRING,
@@ -72,7 +73,8 @@ class FunctionalTest extends WebTestCase
             202, self::VALID_REQUEST));
     }
 
-    public function testRuntimeException(): void
+    /** @test */
+    public function it_throw_runtime_exception(): void
     {
         self::assertEquals([
             'errors' => [[
@@ -81,7 +83,8 @@ class FunctionalTest extends WebTestCase
         ], $this->get('/api/test/exception/runtime', 500));
     }
 
-    public function testValidationError(): void
+    /** @test */
+    public function it_throw_validation_exception(): void
     {
         $invalidRequest = self::VALID_REQUEST;
         unset($invalidRequest['testStringField']);
@@ -103,7 +106,8 @@ class FunctionalTest extends WebTestCase
         ], $this->post('/api/test/code', 400, $invalidRequest));
     }
 
-    public function testArrayValidationError(): void
+    /** @test */
+    public function it_throw_validation_exception_with_failed_array(): void
     {
         $invalidRequest = self::VALID_REQUEST;
         unset($invalidRequest['testArrayField'][1]['testSubStringField']);
@@ -119,7 +123,8 @@ class FunctionalTest extends WebTestCase
         ], $this->post('/api/test/code', 400, $invalidRequest));
     }
 
-    public function testSubValidationError(): void
+    /** @test */
+    public function it_throw_validation_exception_with_sub_element_error(): void
     {
         $invalidRequest = self::VALID_REQUEST;
         unset($invalidRequest['testSubField']['testSubStringField']);
@@ -135,28 +140,21 @@ class FunctionalTest extends WebTestCase
         ], $this->post('/api/test/code', 400, $invalidRequest));
     }
 
-    public function testNotFound(): void
-    {
-        self::assertEquals([
-            'errors' => [[
-                'message' => 'No route found for "POST /api/_void_"',
-            ]]
-        ], $this->post('/api/_void_', 404));
-    }
-
-    public function testNotFoundException(): void
+    /** @test */
+    public function it_throws_not_found_exception(): void
     {
         self::assertEquals([
             'errors' => [[
                 'message' => 'Test',
             ]]
-        ], $this->post('/api/test/exception/not-found', 404));
+        ], $this->get('/api/test/exception/not-found', 404));
     }
 
-    public function testValidDateTime(): void
+    /** @test */
+    public function it_makes_request_with_valid_datetime(): void
     {
         $validRequestWithDateTime = self::VALID_REQUEST;
-        $validRequestWithDateTime['dateTime'] = 1580608940;
+        $validRequestWithDateTime['dateTime'] = '2022-10-19';
 
         self::assertEquals([
             'testStringField' => self::TEST_STRING,
@@ -176,29 +174,14 @@ class FunctionalTest extends WebTestCase
                     'testSubIntField' => self::TEST_SUB_INT_2,
                 ],
             ],
-            'dateTime' => 1580608940,
+            'dateTime' => '2022-10-19T00:00:00+00:00',
             'testCollection' => null,
         ], $this->post(sprintf('/api/test/%s', self::TEST_CODE),
             202, $validRequestWithDateTime));
     }
 
-    public function testInvalidDateTime(): void
-    {
-        $invalid = 'invalid';
-        $invalidRequestWithEnum = self::VALID_REQUEST;
-        $invalidRequestWithEnum['dateTime'] = $invalid;
-
-        self::assertEquals([
-            'errors' => [
-                [
-                    'message' => sprintf('Invalid datetime "%s", expected one of the format "U".', $invalid),
-                ]
-            ],
-        ], $this->post(sprintf('/api/test/%s', self::TEST_CODE),
-            400, $invalidRequestWithEnum));
-    }
-
-    public function testCollection(): void
+    /** @test */
+    public function it_makes_request_with_collection(): void
     {
         $collection = [
             [
@@ -244,5 +227,14 @@ class FunctionalTest extends WebTestCase
             ],
         ], $this->post(sprintf('/api/test/%s', self::TEST_CODE),
             202, $validRequestWithCollection));
+    }
+
+    /** @test */
+    public function it_makes_request_with_paginated_response(): void
+    {
+        $response = $this->post(sprintf('/api/%s', 'paginated'), 200, self::VALID_REQUEST);
+        self::assertIsArray($response);
+        self::assertCount(2, $response);
+
     }
 }

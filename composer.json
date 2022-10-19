@@ -27,7 +27,8 @@
     "symfony/dependency-injection": "^5.4",
     "symfony/config": "^5.4",
     "symfony/options-resolver": "^5.4",
-    "doctrine/orm": "^2.13"
+    "doctrine/orm": "^2.13",
+    "symfony/web-link": "^5.4"
   },
   "autoload": {
     "psr-4": {

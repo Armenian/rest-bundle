@@ -4,14 +4,16 @@ declare(strict_types=1);
 namespace DMP\RestBundle\Tests\Fixtures\Controller;
 
 
+use DMP\RestBundle\Pagination\Paginated;
+use DMP\RestBundle\Pagination\Pagination;
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use DMP\RestBundle\Annotation\BodyConverter;
 use DMP\RestBundle\Tests\Fixtures\RequestDTO;
 use DMP\RestBundle\Tests\Fixtures\ResponseDTO;
 use DMP\RestBundle\Tests\Fixtures\ResponseSubDTO;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use DMP\RestBundle\Annotation as Rest;
 use RuntimeException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TestController
@@ -22,12 +24,49 @@ class TestController
     public const EXCEPTION_VALUES = [
         'foo' => 'bar',
     ];
-    /**
-     * @Rest\Post("/api/test/{testCode}")
-     * @Rest\View(statusCode=202)
-     * @BodyConverter("request", class="DMP\RestBundle\Tests\Fixtures\RequestDTO:class")
-     */
+
+    #[Rest\Post("/api/test/{testCode}")]
+    #[Rest\Serializable(statusCode: 202)]
+    #[BodyConverter("request", class: "DMP\RestBundle\Tests\Fixtures\RequestDTO")]
     public function request(string $testCode, RequestDTO $request): ResponseDTO
+    {
+        return $this->getResponseDtoFromRequest($testCode, $request);
+    }
+
+    #[Rest\Post("/api/paginated")]
+    #[Rest\Serializable(statusCode: 200)]
+    #[BodyConverter("request", class: "DMP\RestBundle\Tests\Fixtures\RequestDTO")]
+    public function paginated(RequestDTO $request): Paginated
+    {
+        return new Paginated(
+            100,
+            2,
+            1,
+            new ArrayCollection(
+                [
+                    $this->getResponseDtoFromRequest('paginated', $request),
+                    $this->getResponseDtoFromRequest('paginated', $request)
+                ]
+            ),
+            50,
+            null,
+            2
+        );
+    }
+
+    #[Rest\Get("/api/test/exception/runtime")]
+    public function runExceptionPropagation(): void
+    {
+        throw new RuntimeException('test runtime exception', 42);
+    }
+
+    #[Rest\Get("/api/test/exception/not-found")]
+    public function notFound(): void
+    {
+        throw new NotFoundHttpException('Test');
+    }
+
+    private function getResponseDtoFromRequest(string $testCode, RequestDTO $request): ResponseDTO
     {
         $response = new ResponseDTO();
         $response->testStringField = $request->testStringField;
@@ -50,54 +89,5 @@ class TestController
         $response->dateTime = $request->dateTime;
         $response->testCollection = $request->testCollection;
         return $response;
-    }
-
-    /**
-     * @Rest\Get("/api/test/exception/runtime")
-     */
-    public function runExceptionPropagation(): void
-    {
-        throw new RuntimeException('test runtime exception', 42);
-    }
-
-    /**
-     * @Rest\Get("/api/test/exception/translatable")
-     */
-    public function runTranslatableException(): void
-    {
-        throw new class extends Exception implements TranslatableException
-        {
-
-            /**
-             * AnException constructor.
-             */
-            public function __construct()
-            {
-                parent::__construct(TestController::EXCEPTION_MESSAGE);
-            }
-
-            public function getKey(): string
-            {
-                return TestController::EXCEPTION_KEY;
-            }
-
-            public function getGroup(): string
-            {
-                return TestController::EXCEPTION_GROUP;
-            }
-
-            public function getValues(): array
-            {
-                return TestController::EXCEPTION_VALUES;
-            }
-        };
-    }
-
-    /**
-     * @Rest\Post("/api/test/exception/not-found")
-     */
-    public function notFound(): void
-    {
-        throw new NotFoundHttpException('Test');
     }
 }

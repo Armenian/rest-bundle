@@ -5,6 +5,11 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  DMP\RestBundle\Pagination\Listener\PaginationListener:
+    autowire: true
+    tags:
+      - { name: kernel.event_subscriber }
+
   dmp_rest.serializer.symfony:
     autowire: true
     class: DMP\RestBundle\Serializer\SymfonySerializerAdapter
@@ -22,3 +27,17 @@ services:
       - { name: kernel.event_subscriber }
 
   DMP\RestBundle\Controller\DTO\ExceptionDTOFactory: ~
+
+  DMP\RestBundle\Pagination\Doctrine\QueryBuilderPaginator: ~
+
+  DMP\RestBundle\Pagination\Paginator:
+    arguments:
+      $paginator: '@DMP\RestBundle\Pagination\Doctrine\QueryBuilderPaginator'
+
+  DMP\RestBundle\Pagination\ArgumentResolver\PaginationArgumentValueResolver:
+    arguments:
+      $limit: 20
+      $maxLimit: 100
+      $type: 'query'
+    tags:
+      - { name: controller.argument_value_resolver }

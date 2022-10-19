@@ -1,10 +1,9 @@
 framework:
   test: true
-services:
+  validation:
+    enabled: true
 
-  _defaults:
-    autowire: true
-    autoconfigure: true
+services:
 
   DMP\RestBundle\Tests\Fixtures\Controller\TestController:
     autowire: true
