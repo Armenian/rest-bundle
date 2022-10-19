@@ -6,6 +6,7 @@ namespace DMP\RestBundle\Controller\DTO;
 
 use DMP\RestBundle\Validation\ValidationException;
 use Throwable;
+use ReflectionClass;
 use function str_contains;
 use function explode;
 
@@ -14,7 +15,9 @@ class ExceptionDTOFactory implements ExceptionDTOFactoryInterface
     public function buildExceptionDTO(Throwable $exception): ExceptionDTO
     {
         $exceptionDTO = new ExceptionDTO();
-        $exceptionDTO->errors[] = new Error($exception->getMessage());
+        $exceptionDTO->errors[] = new Error(
+            $exception->getMessage() ? $exception->getMessage() : (new ReflectionClass($exception->getPrevious()))->getShortName()
+        );
         return $exceptionDTO;
     }
 
