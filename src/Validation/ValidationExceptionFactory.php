@@ -17,6 +17,7 @@ class ValidationExceptionFactory
         return new ValidationException(array_map(
             fn(ConstraintViolationInterface $violation) => new ValidationError(
                 $violation->getPropertyPath(),
+                $violation->getParameters(),
                 $type,
                 $violation->getMessageTemplate()??$violation->getMessage(),
             ),
