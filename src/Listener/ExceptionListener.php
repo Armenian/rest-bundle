@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DMP\RestBundle\Listener;
 
 use DMP\RestBundle\Controller\DTO\ExceptionDTOFactoryInterface;
+use DMP\RestBundle\Exception\NotFoundException;
 use DMP\RestBundle\Validation\ValidationException;
 use Doctrine\DBAL\Exception\DriverException;
 use InvalidArgumentException;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Throwable;
+use LogicException;
 
 class ExceptionListener  implements EventSubscriberInterface
 {
@@ -30,12 +32,8 @@ class ExceptionListener  implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        if (!$exception instanceof Throwable) {
-            throw new InvalidArgumentException('Provided argument is not throwable: ' . get_class($exception));
-        }
-
         if ($exception instanceof DriverException && $this->appEnv === 'prod') {
-            throw new \LogicException('Bad request');
+            throw new LogicException('Bad request');
         }
 
         if ($exception instanceof HandlerFailedException) {
@@ -66,6 +64,14 @@ class ExceptionListener  implements EventSubscriberInterface
         } else {
             $response = new JsonResponse($this->exceptionDTOFactory->buildExceptionDTO($exception));
         }
-        return $response;
+        return match (true) {
+            $exception instanceof ValidationException => new JsonResponse(
+                $this->exceptionDTOFactory->buildExceptionDTOFromValidationException($exception),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type' => "application/problem+json"]),
+            $exception instanceof NotFoundException => new JsonResponse(
+                $this->exceptionDTOFactory->buildExceptionDTO($exception), Response::HTTP_NOT_FOUND),
+            default => new JsonResponse($this->exceptionDTOFactory->buildExceptionDTO($exception))
+        };
     }
 }
