@@ -8,7 +8,6 @@ use DMP\RestBundle\Controller\DTO\ExceptionDTOFactoryInterface;
 use DMP\RestBundle\Exception\NotFoundException;
 use DMP\RestBundle\Validation\ValidationException;
 use Doctrine\DBAL\Exception\DriverException;
-use InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,7 +36,7 @@ class ExceptionListener  implements EventSubscriberInterface
         }
 
         if ($exception instanceof HandlerFailedException) {
-            $response = $this->getResponse($exception->getNestedExceptions()[0]);
+            $response = $this->getResponse($exception->getPrevious());
         } else {
             $response = $this->getResponse($exception);
         }
@@ -55,15 +54,6 @@ class ExceptionListener  implements EventSubscriberInterface
 
     private function getResponse(Throwable $exception): Response
     {
-        if ($exception instanceof ValidationException) {
-            $response = new JsonResponse(
-                $this->exceptionDTOFactory->buildExceptionDTOFromValidationException($exception),
-                Response::HTTP_BAD_REQUEST,
-                ['content-type' => "application/problem+json"]
-            );
-        } else {
-            $response = new JsonResponse($this->exceptionDTOFactory->buildExceptionDTO($exception));
-        }
         return match (true) {
             $exception instanceof ValidationException => new JsonResponse(
                 $this->exceptionDTOFactory->buildExceptionDTOFromValidationException($exception),
