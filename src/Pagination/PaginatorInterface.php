@@ -13,6 +13,7 @@ interface PaginatorInterface
         QueryBuilder $queryBuilder,
         Pagination   $paginationParameters,
         bool $fetchJoinCollection,
-        ?callable $callback
+        ?callable $callback,
+        bool $optimized = false
     ): PaginatedCollection;
 }
