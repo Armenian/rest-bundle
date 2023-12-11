@@ -10,6 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DMP\RestBundle\Pagination\Paginated;
 use DMP\RestBundle\Pagination\Pagination;
+use DMP\RestBundle\Pagination\OptimizedPaginator\OptimizedPaginator;
 use Doctrine\ORM\Tools\Pagination\CountWalker;
 use ArrayIterator;
 use Exception;
@@ -21,7 +22,7 @@ class QueryBuilderPaginator implements PaginatorInterface
      * @throws Exception
      */
     public function paginate(QueryBuilder $queryBuilder, Pagination $paginationParameters,
-                                bool $fetchJoinCollection, ?callable $callback): Paginated
+                                bool $fetchJoinCollection, ?callable $callback, bool $optimized = false): Paginated
     {
 	    $queryBuilder->getQuery()->setHint(CountWalker::HINT_DISTINCT, false);
 
@@ -31,8 +32,11 @@ class QueryBuilderPaginator implements PaginatorInterface
                 ->setMaxResults($paginationParameters->getLimit())
             ;
         }
-
-        $paginator = new Paginator($queryBuilder, $fetchJoinCollection);
+        if ($optimized === true) {
+            $paginator = new OptimizedPaginator($queryBuilder, $fetchJoinCollection);
+        } else {
+            $paginator = new Paginator($queryBuilder, $fetchJoinCollection);
+        }
 
         return new Paginated(
             $paginator->count(),
