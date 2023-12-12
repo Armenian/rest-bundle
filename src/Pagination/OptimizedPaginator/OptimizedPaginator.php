@@ -13,7 +13,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use function array_map;
 use function array_sum;
 
-final class OptimizedPaginator extends Paginator
+class OptimizedPaginator extends Paginator
 {
     private QueryBuilder $originQuery;
 
