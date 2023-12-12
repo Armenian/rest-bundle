@@ -27,7 +27,7 @@ final class OptimizedPaginator extends Paginator
         parent::__construct($query, $fetchJoinCollection);
     }
 
-    private ?int $count;
+    private ?int $count = null;
 
     public function count(): int
     {
@@ -39,7 +39,7 @@ final class OptimizedPaginator extends Paginator
                 }
 
                 $from = $this->originQuery->getDQLPart('from');
-                if (null !== $from) {
+                if (null === $from) {
                     return parent::count();
                 }
                 $tableName = $from[0]->getAlias();
