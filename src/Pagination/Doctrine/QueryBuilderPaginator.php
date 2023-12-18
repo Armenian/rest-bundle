@@ -24,18 +24,21 @@ class QueryBuilderPaginator implements PaginatorInterface
     public function paginate(QueryBuilder $queryBuilder, Pagination $paginationParameters,
                                 bool $fetchJoinCollection, ?callable $callback, bool $optimized = false): Paginated
     {
-	    $queryBuilder->getQuery()->setHint(CountWalker::HINT_DISTINCT, false);
+	    $query = $queryBuilder->getQuery();
+        if ($fetchJoinCollection === false) {
+            $query->setHint(CountWalker::HINT_DISTINCT, false);
+        }
 
         if ($paginationParameters->getLimit() !== 0) {
-            $queryBuilder
+            $query
                 ->setFirstResult(($paginationParameters->getPage() - 1) * $paginationParameters->getLimit())
                 ->setMaxResults($paginationParameters->getLimit())
             ;
         }
         if ($optimized === true) {
-            $paginator = new OptimizedPaginator($queryBuilder, $fetchJoinCollection);
+            $paginator = new OptimizedPaginator($queryBuilder, $query, $fetchJoinCollection);
         } else {
-            $paginator = new Paginator($queryBuilder, $fetchJoinCollection);
+            $paginator = new Paginator($query, $fetchJoinCollection);
         }
 
         return new Paginated(

@@ -17,13 +17,9 @@ class OptimizedPaginator extends Paginator
 {
     private QueryBuilder $originQuery;
 
-    /**
-     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
-     * @param bool               $fetchJoinCollection Whether the query joins a collection (true by default).
-     */
-    public function __construct($query, $fetchJoinCollection = true)
+    public function __construct(QueryBuilder $queryBuilder, Query|QueryBuilder $query, bool $fetchJoinCollection = true)
     {
-        $this->originQuery = $query;
+        $this->originQuery = $queryBuilder;
         parent::__construct($query, $fetchJoinCollection);
     }
 
