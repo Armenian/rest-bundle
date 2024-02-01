@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 class Paginated implements PaginatedCollection, \JsonSerializable
 {
     public function __construct(
-        private readonly int $totalCount,
+        private readonly ?int $totalCount,
         private readonly int $limit,
         private readonly int $page,
         private readonly Collection $pageResults,
@@ -18,7 +18,7 @@ class Paginated implements PaginatedCollection, \JsonSerializable
         private readonly ?int $nextPage = null)
     {}
 
-    public function getTotalCount(): int
+    public function getTotalCount(): ?int
     {
         return $this->totalCount;
     }

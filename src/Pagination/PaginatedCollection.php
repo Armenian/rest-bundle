@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 
 interface PaginatedCollection
 {
-    public function getTotalCount(): int;
+    public function getTotalCount(): ?int;
     public function getLimit(): int;
     public function getPage(): int;
     public function getPageResults(): Collection;

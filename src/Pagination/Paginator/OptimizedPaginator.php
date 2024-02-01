@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace DMP\RestBundle\Pagination\OptimizedPaginator;
+namespace DMP\RestBundle\Pagination\Paginator;
 
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;

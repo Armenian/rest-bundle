@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace DMP\RestBundle\Pagination\Doctrine;
 
-use DMP\RestBundle\Pagination\PaginatorInterface;
+use DMP\RestBundle\Pagination\Paginator as QBPaginator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DMP\RestBundle\Pagination\Paginated;
 use DMP\RestBundle\Pagination\Pagination;
-use DMP\RestBundle\Pagination\OptimizedPaginator\OptimizedPaginator;
+use DMP\RestBundle\Pagination\Paginator\OptimizedPaginator;
 use Doctrine\ORM\Tools\Pagination\CountWalker;
 use ArrayIterator;
 use Exception;
 
-class QueryBuilderPaginator implements PaginatorInterface
+class QueryBuilderPaginator implements QBPaginator
 {
 
     /**

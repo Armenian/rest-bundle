@@ -7,15 +7,13 @@ namespace DMP\RestBundle\Pagination;
 
 use Doctrine\ORM\QueryBuilder;
 
-class Paginator
+interface Paginator
 {
-    public function __construct(
-        private readonly PaginatorInterface $paginator)
-    {}
-
-    public function paginate(QueryBuilder $queryBuilder, Pagination $pagination,
-                                bool $fetchJoinCollection = false, ?callable $callback = null, bool $optimized = false): Paginated
-    {
-        return $this->paginator->paginate($queryBuilder, $pagination, $fetchJoinCollection, $callback, $optimized);
-    }
+    public function paginate(
+        QueryBuilder $queryBuilder,
+        Pagination   $paginationParameters,
+        bool $fetchJoinCollection,
+        ?callable $callback,
+        bool $optimized = false
+    ): PaginatedCollection;
 }
