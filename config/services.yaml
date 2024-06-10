@@ -32,8 +32,8 @@ services:
 
   DMP\RestBundle\Pagination\ArgumentResolver\PaginationArgumentValueResolver:
     arguments:
-      $limit: 20
-      $maxLimit: 100
+      $limit: '%dmp_rest.pagination.limit%'
+      $maxLimit: '%dmp_rest.pagination.maxLimit%'
       $type: 'query'
     tags:
       - { name: controller.argument_value_resolver }

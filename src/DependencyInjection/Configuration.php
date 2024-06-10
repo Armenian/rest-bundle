@@ -21,6 +21,12 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->arrayNode('pagination')->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('limit')->defaultValue(100)->end()
+                        ->integerNode('maxLimit')->defaultValue(200)->end()
+                    ->end()
+                ->end()
                 ->arrayNode('body_converter')
                     ->canBeEnabled()
                     ->children()

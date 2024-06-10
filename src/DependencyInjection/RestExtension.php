@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use function array_walk;
 
 class RestExtension extends Extension implements PrependExtensionInterface
 {
@@ -22,6 +23,9 @@ class RestExtension extends Extension implements PrependExtensionInterface
         $loader->load('services.yaml');
 
         $config = $this->processConfiguration(new Configuration(), $configs);
+        array_walk($config['pagination'], function ($value, $key) use ($container) {
+            $container->setParameter('dmp_rest.pagination.' . $key, $value);
+        });
 
         $this->loadBodyConverter($config, $loader, $container);
         $this->loadQueryConverter($config, $loader, $container);
