@@ -16,7 +16,8 @@ class ExceptionDTOFactory implements ExceptionDTOFactoryInterface
     {
         $exceptionDTO = new ExceptionDTO();
         $exceptionDTO->errors[] = new Error(
-            $exception->getMessage() ? $exception->getMessage() : (new ReflectionClass($exception->getPrevious()))->getShortName()
+            $exception->getMessage() ? $exception->getMessage() :
+                (new ReflectionClass($exception->getPrevious() ?? $exception))->getShortName()
         );
         return $exceptionDTO;
     }
