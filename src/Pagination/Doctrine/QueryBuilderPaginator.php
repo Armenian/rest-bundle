@@ -10,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DMP\RestBundle\Pagination\Paginated;
 use DMP\RestBundle\Pagination\Pagination;
-use DMP\RestBundle\Pagination\Paginator\OptimizedPaginator;
+use DMP\RestBundle\Pagination\Paginator\EstimateCountPaginator;
 use Doctrine\ORM\Tools\Pagination\CountWalker;
 use ArrayIterator;
 use Exception;
@@ -36,7 +36,7 @@ class QueryBuilderPaginator implements QBPaginator
             ;
         }
         if ($optimized === true) {
-            $paginator = new OptimizedPaginator($queryBuilder, $query, $fetchJoinCollection);
+            $paginator = new EstimateCountPaginator($queryBuilder, $query, $fetchJoinCollection);
         } else {
             $paginator = new Paginator($query, $fetchJoinCollection);
         }

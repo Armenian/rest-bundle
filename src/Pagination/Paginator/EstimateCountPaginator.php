@@ -13,7 +13,21 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use function array_map;
 use function array_sum;
 
-class OptimizedPaginator extends Paginator
+//CREATE FUNCTION estimate_count(query text) RETURNS integer AS $$
+//DECLARE
+//rec   record;
+//    rows  integer;
+//BEGIN
+//    FOR rec IN EXECUTE 'EXPLAIN ' || query LOOP
+//            rows := substring(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
+//            EXIT WHEN rows IS NOT NULL;
+//        END LOOP;
+//    RETURN rows;
+//END;
+//$$ LANGUAGE plpgsql VOLATILE STRICT;
+
+//SELECT estimate_count('SELECT 1 FROM table_name WHERE id > 100 ')
+class EstimateCountPaginator extends Paginator
 {
     private QueryBuilder $originQuery;
 

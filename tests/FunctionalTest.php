@@ -95,12 +95,18 @@ class FunctionalTest extends WebTestCase
                 [
                     'message' => 'BLANK_VALIDATION_MESSAGE',
                     'field' => 'testStringField',
-                    'type' => 'body'
+                    'type' => 'body',
+                    'parameters' => [
+                        '{{ value }}' => 'null',
+                    ],
                 ],
                 [
                     'message' => 'EMAIL_VALIDATION_MESSAGE {{ value }}',
                     'field' => 'testEmailField',
-                    'type' => 'body'
+                    'type' => 'body',
+                    'parameters' => [
+                        '{{ value }}' => '"not-an-email"'
+                    ],
                 ],
             ],
         ], $this->post('/api/test/code', 400, $invalidRequest));
@@ -117,7 +123,10 @@ class FunctionalTest extends WebTestCase
                 [
                     'message' => 'BLANK_SUB_VALIDATION_MESSAGE',
                     'field' => 'testArrayField[1].testSubStringField',
-                    'type' => 'body'
+                    'type' => 'body',
+                    'parameters' => [
+                        '{{ value }}' => 'null',
+                    ],
                 ]
             ],
         ], $this->post('/api/test/code', 400, $invalidRequest));
@@ -134,7 +143,10 @@ class FunctionalTest extends WebTestCase
                 [
                     'message' => 'BLANK_SUB_VALIDATION_MESSAGE',
                     'field' => 'testSubField.testSubStringField',
-                    'type' => 'body'
+                    'type' => 'body',
+                    'parameters' => [
+                        '{{ value }}' => 'null',
+                    ],
                 ]
             ],
         ], $this->post('/api/test/code', 400, $invalidRequest));
