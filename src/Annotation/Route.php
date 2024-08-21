@@ -27,6 +27,13 @@ if (class_exists(BaseAttributeRoute::class)) {
     }
 }
 
+/**
+ * Route annotation class.
+ *
+ * @Annotation
+ * @NamedArgumentConstructor
+ * @Target({"CLASS", "METHOD"})
+ */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class Route extends CompatRoute
 {
