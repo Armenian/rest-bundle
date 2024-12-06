@@ -66,6 +66,7 @@ class PaginationListener implements EventSubscriberInterface
         $response = $event->getResponse();
 
         $response->headers->set('X-Page', (string)$paginator->getPage());
+        $response->headers->set('X-Per-Page', (string)$paginator->getLimit());
         $response->headers->set('X-Limit', (string)$paginator->getLimit());
         $response->headers->set('X-Total-Count', (string)$paginator->getTotalCount());
         $response->headers->set('X-Count', (string)$paginator->getPageResults()->count());
