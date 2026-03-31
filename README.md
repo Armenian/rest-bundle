@@ -12,7 +12,6 @@ Write controllers in a style:
 class TestController
 {
 
-    #[Rest\Post("")]
     #[BodyConverter("request")]
     #[Rest\Serializable(statusCode: 201)]
     public function request(string $testCode, RequestDTO $request): ResponseDTO

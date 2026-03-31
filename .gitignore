@@ -1,6 +1,7 @@
 /.idea/
 composer.lock
 .env
+var/
 
 # Managed by Composer
 /vendor/
