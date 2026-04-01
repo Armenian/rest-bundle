@@ -60,8 +60,7 @@ Validation error responses are different:
     },
     {
       "message": "Field value should not be blank.",
-      "field": "password",
-      "parameters": {}
+      "field": "password"
     }
   ]
 }

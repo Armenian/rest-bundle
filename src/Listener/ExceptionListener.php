@@ -32,13 +32,11 @@ final readonly class ExceptionListener implements EventSubscriberInterface
             throw new LogicException('Bad request');
         }
 
-        if ($exception instanceof HandlerFailedException) {
-            $response = $this->getResponse($exception->getPrevious());
-        } else {
-            $response = $this->getResponse($exception);
-        }
+        $throwable = ($exception instanceof HandlerFailedException)
+            ? ($exception->getPrevious() ?? $exception)
+            : $exception;
 
-        $event->setResponse($response);
+        $event->setResponse($this->getResponse($throwable));
         $event->stopPropagation();
     }
 

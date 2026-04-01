@@ -70,4 +70,4 @@ RUN docker-php-source extract \
     && docker-php-source delete
 
 # composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
