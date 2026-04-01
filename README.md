@@ -8,13 +8,17 @@ Add bundle `DMP\RestBundle\RestBundle` to your kernel.
 
 Write controllers in a style:
 
-```
+```php
+use DMP\RestBundle\Annotation as Rest;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
+
 class TestController
 {
 
-    #[BodyConverter("request")]
+    #[Route("/api/test", methods: ["POST"])]
     #[Rest\Serializable(statusCode: 201)]
-    public function request(string $testCode, RequestDTO $request): ResponseDTO
+    public function request(#[MapRequestPayload] RequestDTO $request): ResponseDTO
     {
         ...
     }
@@ -26,47 +30,38 @@ All routes should start with '/api/' (TODO: remove this hard-coded requirement)
 
 Consult `tests/Fixtures/` directory for an overview of how to define Rest Controllers
 
-## BodyConverter
-Put `@BodyConverter` annotation (`DMP\RestBundle\Annotations\BodyConverter`) on a controller's action.
-Put the name of a DTO argument as a default argument to the annotation.
+## Request Data Mapping
+Use Symfony's native attributes for mapping request data to DTOs:
+- `#[MapRequestPayload]` for JSON request body.
+- `#[MapQueryString]` for query parameters.
 
-This will have the following effect:
-The `@dmp_rest.converter.request_body` service will try to deserialize the request body into the class of the DTO argument.
-The deserialized DTO is then validated (Symfony Validator is used, configure accordingly)
-The validated deserialized DTO is going to be passed as a value of the DTO argument in controller action.
+The bundle's `ExceptionListener` will automatically catch validation errors from these attributes and format them into a consistent JSON response.
 
 ## Exceptions
-Any validation error by default throws an exception (`DMP\RestBundle\Validation\ValidationException` to be precise). 
-This is achieved via `@dmp_rest.validation_exception_throwing_body_converter` service (decorator).
-
-An important caveat is that it relies on value of `dmp_rest.body_converter.validation_errors_argument` to be `validationErrors` 
-(which is defined as a `const` `DMP\RestBundle\Validation\ValidationExceptionThrowingBodyConverterDecorator::VALIDATION_ERRORS_ARGUMENT_NAME`)
-Overriding that value will disable the decorator's ability to throw an exception which would cause unvalidated DTOs to be passed into controller actions.
-
-If controller throws exception it will be converted into a response in the form
+If the controller throws an exception, it will be converted into a response in the form
 ```json
 {
   "errors": [
     {
-      "message": "Exception message",
+      "message": "Exception message"
     }
   ]
 }
 ```
 
-`DMP\RestBundle\Validation\ValidationException` is treated differently:
+Validation error responses are different:
 ```json
 {
   "errors": [
     {
       "message": "Field value should be a valid email address.",
-      "type": "body",
-      "field": "email"
+      "field": "email",
+      "parameters": {}
     },
     {
       "message": "Field value should not be blank.",
-      "type": "body",
-      "field": "password"
+      "field": "password",
+      "parameters": {}
     }
   ]
 }

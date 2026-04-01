@@ -5,38 +5,30 @@ namespace DMP\RestBundle\Tests\Fixtures\Controller;
 
 
 use DMP\RestBundle\Pagination\Paginated;
-use DMP\RestBundle\Pagination\Pagination;
 use Doctrine\Common\Collections\ArrayCollection;
-use Exception;
-use DMP\RestBundle\Annotation\BodyConverter;
 use DMP\RestBundle\Tests\Fixtures\RequestDTO;
 use DMP\RestBundle\Tests\Fixtures\ResponseDTO;
 use DMP\RestBundle\Tests\Fixtures\ResponseSubDTO;
 use DMP\RestBundle\Annotation as Rest;
 use RuntimeException;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 
 class TestController
 {
-    public const EXCEPTION_MESSAGE = 'MESSAGE';
-    public const EXCEPTION_KEY = 'KEY';
-    public const EXCEPTION_GROUP = 'GROUP';
-    public const EXCEPTION_VALUES = [
-        'foo' => 'bar',
-    ];
-
-    #[Rest\Post("/api/test/{testCode}")]
+    #[Route("/api/test/{testCode}", methods: ["POST"])]
     #[Rest\Serializable(statusCode: 202)]
-    #[BodyConverter("request", class: "DMP\RestBundle\Tests\Fixtures\RequestDTO")]
-    public function request(string $testCode, RequestDTO $request): ResponseDTO
-    {
+    public function request(
+        string $testCode,
+        #[MapRequestPayload] RequestDTO $request
+    ): ResponseDTO {
         return $this->getResponseDtoFromRequest($testCode, $request);
     }
 
-    #[Rest\Post("/api/paginated")]
+    #[Route("/api/paginated", methods: ["POST"])]
     #[Rest\Serializable(statusCode: 200)]
-    #[BodyConverter("request", class: "DMP\RestBundle\Tests\Fixtures\RequestDTO")]
-    public function paginated(RequestDTO $request): Paginated
+    public function paginated(#[MapRequestPayload] RequestDTO $request): Paginated
     {
         return new Paginated(
             100,
@@ -54,13 +46,13 @@ class TestController
         );
     }
 
-    #[Rest\Get("/api/test/exception/runtime")]
+    #[Route("/api/test/exception/runtime", methods: ["GET"])]
     public function runExceptionPropagation(): void
     {
         throw new RuntimeException('test runtime exception', 42);
     }
 
-    #[Rest\Get("/api/test/exception/not-found")]
+    #[Route("/api/test/exception/not-found", methods: ["GET"])]
     public function notFound(): void
     {
         throw new NotFoundHttpException('Test');
@@ -74,6 +66,7 @@ class TestController
             $request->testSubField->testSubStringField,
             $request->testSubField->testSubIntField
         );
+
         $response->testArrayField = [
             new ResponseSubDTO(
                 $request->testArrayField[0]->testSubStringField,

@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace DMP\RestBundle\Annotation;
 
 use Attribute;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 
 /**
  * @Annotation
  */
-#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
-final class Serializable implements ConfigurationInterface
+#[Attribute(Attribute::TARGET_METHOD)]
+final class Serializable
 {
 
-    public const ATTR_KEY = '_serializable';
+    public const string ATTR_KEY = '_serializable';
 
     private ?int $statusCode;
-    private array $groups = [];
+    private array $groups;
 
     public function __construct(
         $data = [],

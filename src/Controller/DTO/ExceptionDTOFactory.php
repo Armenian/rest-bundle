@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace DMP\RestBundle\Controller\DTO;
 
-use DMP\RestBundle\Validation\ValidationException;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Throwable;
 use ReflectionClass;
 use function str_contains;
@@ -22,17 +23,21 @@ class ExceptionDTOFactory implements ExceptionDTOFactoryInterface
         return $exceptionDTO;
     }
 
-    public function buildExceptionDTOFromValidationException(ValidationException $exception): ExceptionDTO
+    public function buildExceptionDTOFromViolations(ConstraintViolationListInterface $violations): ExceptionDTO
     {
         $dto = new ExceptionDTO();
-        $errors = $exception->getValidationErrors();
-        /** @var ValidationError $error */
-        foreach($errors as $error) {
-            if(str_contains($error->message, '|')) {
-                $error->message = explode('|', $error->message)[1];
+        /** @var ConstraintViolationInterface $violation */
+        foreach ($violations as $violation) {
+            $message = $violation->getMessageTemplate() ?? $violation->getMessage();
+            if (str_contains($message, '|')) {
+                $message = explode('|', $message)[1];
             }
+            $dto->errors[] = new ValidationError(
+                $violation->getPropertyPath(),
+                $violation->getParameters(),
+                $message,
+            );
         }
-        $dto->errors = $errors;
         return $dto;
     }
 }

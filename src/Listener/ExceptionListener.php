@@ -6,25 +6,22 @@ namespace DMP\RestBundle\Listener;
 
 use DMP\RestBundle\Controller\DTO\ExceptionDTOFactoryInterface;
 use DMP\RestBundle\Exception\NotFoundException;
-use DMP\RestBundle\Validation\ValidationException;
 use Doctrine\DBAL\Exception\DriverException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Throwable;
 use LogicException;
 
-class ExceptionListener  implements EventSubscriberInterface
+final readonly class ExceptionListener implements EventSubscriberInterface
 {
-
-    private ExceptionDTOFactoryInterface $exceptionDTOFactory;
-
-    public function __construct(ExceptionDTOFactoryInterface $exceptionDTOFactory, private string $appEnv)
+    public function __construct(private ExceptionDTOFactoryInterface $exceptionDTOFactory, private string $appEnv)
     {
-        $this->exceptionDTOFactory = $exceptionDTOFactory;
     }
 
     public function onKernelException(ExceptionEvent $event): void
@@ -54,14 +51,30 @@ class ExceptionListener  implements EventSubscriberInterface
 
     private function getResponse(Throwable $exception): Response
     {
-        return match (true) {
-            $exception instanceof ValidationException => new JsonResponse(
-                $this->exceptionDTOFactory->buildExceptionDTOFromValidationException($exception),
+        $previous = $exception->getPrevious();
+
+        if ($exception instanceof HttpExceptionInterface && $previous instanceof ValidationFailedException) {
+            return new JsonResponse(
+                $this->exceptionDTOFactory->buildExceptionDTOFromViolations($previous->getViolations()),
                 Response::HTTP_BAD_REQUEST,
-                ['content-type' => "application/problem+json"]),
+                ['content-type' => "application/problem+json"]
+            );
+        }
+
+        if ($exception instanceof HttpExceptionInterface) {
+            return new JsonResponse(
+                $this->exceptionDTOFactory->buildExceptionDTO($exception),
+                $exception->getStatusCode()
+            );
+        }
+
+        return match (true) {
             $exception instanceof NotFoundException => new JsonResponse(
                 $this->exceptionDTOFactory->buildExceptionDTO($exception), Response::HTTP_NOT_FOUND),
-            default => new JsonResponse($this->exceptionDTOFactory->buildExceptionDTO($exception))
+            default => new JsonResponse(
+                $this->exceptionDTOFactory->buildExceptionDTO($exception),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            )
         };
     }
 }
