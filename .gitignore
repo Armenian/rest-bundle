@@ -10,3 +10,6 @@ var/
 /report/
 /phpunit.xml
 .phpunit.result.cache
+
+# Symfony reference files
+config/reference.php

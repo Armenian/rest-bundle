@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\ErrorHandler\ErrorHandler;
+
+ErrorHandler::register();
+
 if (!empty($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])) {
     passthru(sprintf(
         'APP_ENV=%s php "%s/tests/bin/console.php" cache:clear --no-warmup',

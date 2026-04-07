@@ -6,6 +6,7 @@ namespace DMP\RestBundle\Tests;
 
 
 use DMP\RestBundle\Tests\Lib\RestTestTrait;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class FunctionalTest extends WebTestCase
@@ -46,7 +47,7 @@ class FunctionalTest extends WebTestCase
         $this->setRestClient(self::createClient());
     }
 
-    /** @test */
+    #[Test]
     public function it_makes_simple_request(): void
     {
         self::assertEquals([
@@ -73,7 +74,7 @@ class FunctionalTest extends WebTestCase
             202, self::VALID_REQUEST));
     }
 
-    /** @test */
+    #[Test]
     public function it_throw_runtime_exception(): void
     {
         self::assertEquals([
@@ -83,7 +84,7 @@ class FunctionalTest extends WebTestCase
         ], $this->get('/api/test/exception/runtime', 500));
     }
 
-    /** @test */
+    #[Test]
     public function it_throw_validation_exception(): void
     {
         $invalidRequest = self::VALID_REQUEST;
@@ -110,7 +111,7 @@ class FunctionalTest extends WebTestCase
         ], $this->post('/api/test/code', 400, $invalidRequest));
     }
 
-    /** @test */
+    #[Test]
     public function it_throw_validation_exception_with_failed_array(): void
     {
         $invalidRequest = self::VALID_REQUEST;
@@ -129,7 +130,7 @@ class FunctionalTest extends WebTestCase
         ], $this->post('/api/test/code', 400, $invalidRequest));
     }
 
-    /** @test */
+    #[Test]
     public function it_throw_validation_exception_with_sub_element_error(): void
     {
         $invalidRequest = self::VALID_REQUEST;
@@ -148,7 +149,7 @@ class FunctionalTest extends WebTestCase
         ], $this->post('/api/test/code', 400, $invalidRequest));
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_not_found_exception(): void
     {
         self::assertEquals([
@@ -158,7 +159,7 @@ class FunctionalTest extends WebTestCase
         ], $this->get('/api/test/exception/not-found', 404));
     }
 
-    /** @test */
+    #[Test]
     public function it_makes_request_with_valid_datetime(): void
     {
         $validRequestWithDateTime = self::VALID_REQUEST;
@@ -188,7 +189,7 @@ class FunctionalTest extends WebTestCase
             202, $validRequestWithDateTime));
     }
 
-    /** @test */
+    #[Test]
     public function it_makes_request_with_collection(): void
     {
         $collection = [
@@ -237,7 +238,7 @@ class FunctionalTest extends WebTestCase
             202, $validRequestWithCollection));
     }
 
-    /** @test */
+    #[Test]
     public function it_makes_request_with_paginated_response(): void
     {
         $response = $this->post(sprintf('/api/%s', 'paginated'), 200, self::VALID_REQUEST);
