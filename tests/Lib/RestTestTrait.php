@@ -47,11 +47,11 @@ trait RestTestTrait
     public function post(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): array
     {
         return JsonHelper::decode($this->postRaw($uri,
@@ -66,11 +66,11 @@ trait RestTestTrait
     public function postRaw(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): string
     {
         return $this->makeRestRequest(
@@ -88,11 +88,11 @@ trait RestTestTrait
     public function put(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): array
     {
         return JsonHelper::decode($this->putRaw($uri,
@@ -107,11 +107,11 @@ trait RestTestTrait
     public function putRaw(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): string
     {
         return $this->makeRestRequest(
@@ -129,11 +129,11 @@ trait RestTestTrait
     public function delete(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): array
     {
         return JsonHelper::decode($this->deleteRaw($uri,
@@ -148,11 +148,11 @@ trait RestTestTrait
     public function deleteRaw(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): string
     {
         return $this->makeRestRequest(
@@ -170,11 +170,11 @@ trait RestTestTrait
     public function get(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): array
     {
         return JsonHelper::decode($this->getRaw($uri,
@@ -189,11 +189,11 @@ trait RestTestTrait
     public function getRaw(
         string $uri,
         int $expectedStatusCode,
-        array $data = null,
+        ?array $data = null,
         bool $dataAsParameters = false,
         array $headers = [],
         array $files = [],
-        string $authToken = null
+        ?string $authToken = null
     ): string
     {
         return $this->makeRestRequest(

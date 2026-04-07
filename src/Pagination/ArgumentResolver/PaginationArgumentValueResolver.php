@@ -8,25 +8,23 @@ namespace DMP\RestBundle\Pagination\ArgumentResolver;
 use DMP\RestBundle\Pagination\ArgumentResolver\Exception\PaginationArgumentValueResolverTypeNotSupporting;
 use DMP\RestBundle\Pagination\Pagination;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-final class PaginationArgumentValueResolver implements ArgumentValueResolverInterface
+final readonly class PaginationArgumentValueResolver implements ValueResolverInterface
 {
-
     public function __construct(
-        private readonly int $limit,
-        private readonly int $maxLimit,
-        private readonly string $type)
+        private int $limit,
+        private int $maxLimit,
+        private string $type)
     {}
-
-    public function supports(Request $request, ArgumentMetadata $argument): bool
-    {
-        return Pagination::class === $argument->getType();
-    }
 
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
+        if (Pagination::class !== $argument->getType()) {
+            return [];
+        }
+
         $resolver = sprintf('resolve%s', ucfirst($this->type));
         if (!method_exists($this, $resolver)) {
             throw new PaginationArgumentValueResolverTypeNotSupporting($this->type);

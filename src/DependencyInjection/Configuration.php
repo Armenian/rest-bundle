@@ -7,8 +7,6 @@ namespace DMP\RestBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class Configuration implements ConfigurationInterface
 {
@@ -25,42 +23,6 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->integerNode('limit')->defaultValue(100)->end()
                         ->integerNode('maxLimit')->defaultValue(200)->end()
-                    ->end()
-                ->end()
-                ->arrayNode('body_converter')
-                    ->canBeEnabled()
-                    ->children()
-                        ->scalarNode('validate')
-                            ->defaultFalse()
-                            ->beforeNormalization()
-                                ->ifTrue()
-                                ->then(function ($value) {
-                                    if (!class_exists(OptionsResolver::class)) {
-                                        throw new InvalidConfigurationException("'body_converter.validate: true' requires OptionsResolver component installation ( composer require symfony/options-resolver )");
-                                    }
-                                    return $value;
-                                })
-                            ->end()
-                        ->end()
-                        ->scalarNode('validation_errors_argument')->defaultValue('validationErrors')->end()
-                    ->end()
-                ->end()
-                ->arrayNode('query_converter')
-                    ->canBeEnabled()
-                    ->children()
-                        ->scalarNode('validate')
-                            ->defaultFalse()
-                            ->beforeNormalization()
-                                ->ifTrue()
-                                ->then(function ($value) {
-                                    if (!class_exists(OptionsResolver::class)) {
-                                        throw new InvalidConfigurationException("'body_converter.validate: true' requires OptionsResolver component installation ( composer require symfony/options-resolver )");
-                                    }
-                                    return $value;
-                                })
-                            ->end()
-                        ->end()
-                        ->scalarNode('validation_errors_argument')->defaultValue('validationErrors')->end()
                     ->end()
                 ->end()
             ->end()

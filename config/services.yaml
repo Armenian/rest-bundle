@@ -15,9 +15,6 @@ services:
     class: DMP\RestBundle\Serializer\SymfonySerializerAdapter
     public: false
 
-  dmp_bundle.validation_exception_factory:
-    class: DMP\RestBundle\Validation\ValidationExceptionFactory
-
   DMP\RestBundle\Listener\ExceptionListener:
     autowire: true
     arguments:
